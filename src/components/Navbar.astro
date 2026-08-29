@@ -1,0 +1,96 @@
+---
+interface Props {
+  currentPath: string
+}
+
+const { currentPath } = Astro.props
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/blog', label: 'Blog' },
+]
+
+function isActive(href: string, current: string) {
+  if (href === '/') return current === '/'
+  if (href.startsWith('/#')) return false
+  return current.startsWith(href)
+}
+---
+
+<header class="fixed top-0 right-0 left-0 z-50">
+  <div class="mx-auto max-w-5xl px-6">
+    <div class="mt-4 flex items-center justify-between rounded-full border border-border bg-surface/80 px-5 py-2.5 backdrop-blur-xl">
+      <a href="/" class="font-mono text-sm font-semibold tracking-tight text-accent">
+        &lt;GY /&gt;
+      </a>
+
+      <!-- Desktop -->
+      <nav class="hidden items-center gap-1 sm:flex">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'px-3 py-1.5 text-sm font-medium transition-colors',
+              isActive(link.href, currentPath)
+                ? 'text-accent'
+                : 'text-text-secondary hover:text-text',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Mobile toggle -->
+      <button
+        id="mobile-toggle"
+        class="flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition-colors hover:text-text sm:hidden"
+        aria-label="Toggle menu"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="4" y1="8" x2="20" y2="8" />
+          <line x1="4" y1="16" x2="20" y2="16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <nav id="mobile-menu" class="mt-2 hidden flex-col gap-1 rounded-2xl border border-border bg-surface/95 p-3 backdrop-blur-xl sm:!hidden">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'rounded-lg px-4 py-2.5 text-sm font-medium transition-colors',
+            isActive(link.href, currentPath)
+              ? 'bg-accent-dim text-accent'
+              : 'text-text-secondary hover:bg-card hover:text-text',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('mobile-toggle')
+  const menu = document.getElementById('mobile-menu')
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const isOpen = !menu.classList.contains('hidden')
+      menu.classList.toggle('hidden', isOpen)
+      menu.classList.toggle('flex', !isOpen)
+      toggle.innerHTML = isOpen
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    })
+    menu.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => {
+        menu.classList.add('hidden')
+        menu.classList.remove('flex')
+      })
+    )
+  }
+</script>

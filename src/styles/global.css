@@ -40,7 +40,6 @@ a {
   text-decoration: none;
 }
 
-/* Blog post markdown styles */
 .prose-post :where(h2) {
   font-size: 1.5rem;
   font-weight: 600;
